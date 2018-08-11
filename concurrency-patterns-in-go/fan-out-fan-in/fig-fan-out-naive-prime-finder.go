@@ -63,20 +63,24 @@ func main() {
 		go func() {
 			defer close(primeStream)
 			for integer := range intStream {
-				integer -= 1
-				prime := true
-				for divisor := integer - 1; divisor > 1; divisor-- {
-					if integer%divisor == 0 {
-						prime = false
-						break
+				select {
+				case <-done:
+					return
+				default:
+					prime := true
+					
+					for divisor := 2; divisor < integer; divisor++ {
+						if integer % divisor == 0 {
+							prime = false
+						}
 					}
-				}
-
-				if prime {
-					select {
-					case <-done:
-						return
-					case primeStream <- integer:
+					
+					if integer < 2 {
+						prime = false
+					}
+					
+					if prime {
+						primeStream <- integer
 					}
 				}
 			}
