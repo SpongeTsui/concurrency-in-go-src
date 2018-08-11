@@ -72,6 +72,7 @@ func main() {
 					for divisor := 2; divisor < integer; divisor++ {
 						if integer % divisor == 0 {
 							prime = false
+							break
 						}
 					}
 					
